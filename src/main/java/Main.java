@@ -1,10 +1,13 @@
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Main {
 	static PrintWriter out;
+	static BufferedReader in;
 
 	public static void main(String[] args) {
 		// You can use print statements as follows for debugging, they'll be visible
@@ -28,12 +31,21 @@ public class Main {
 			// Wait for connection from client.
 			clientSocket = serverSocket.accept();
 			out = new PrintWriter(clientSocket.getOutputStream(), true);
-			out.println("+PONG\r");
+			in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+			String msg = in.readLine();
+			System.out.println("recieved: " + msg);
+			while (msg != null) {
+				System.out.println(msg);
+				if (msg.equals("ping"))
+					out.println("+PONG" + "\r");
+				msg = in.readLine();
+			}
 
+			out.close();
+			in.close();
 		} catch (IOException | InterruptedException e) {
 			System.out.println("IOException: " + e.getMessage());
 		} finally {
-			out.close();
 			try {
 				if (clientSocket != null) {
 					clientSocket.close();
