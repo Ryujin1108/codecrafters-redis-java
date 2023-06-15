@@ -4,7 +4,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Main {
-	PrintWriter out;
+	static PrintWriter out;
 
 	public static void main(String[] args) {
 		// You can use print statements as follows for debugging, they'll be visible
@@ -27,9 +27,13 @@ public class Main {
 			System.out.print(".");
 			// Wait for connection from client.
 			clientSocket = serverSocket.accept();
+			out = new PrintWriter(clientSocket.getOutputStream(), true);
+			out.println("+PONG\r");
+
 		} catch (IOException | InterruptedException e) {
 			System.out.println("IOException: " + e.getMessage());
 		} finally {
+			out.close();
 			try {
 				if (clientSocket != null) {
 					clientSocket.close();
